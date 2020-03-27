@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import './styles.css';
 
@@ -10,21 +10,38 @@ import api from '../../services/api';
 
 
 
+
 export default function Logon() {
     const [id, setId] = useState('');
     const history = useHistory();
+    const [ongId, setOngId] = useState('');
+
+    useEffect(() => {
+        async function loginID() {
+    
+            try {  
+                setOngId(localStorage.getItem('ongId'));
+            
+            } catch (error) {
+                //alert('Erro ao carregar informações. Favor tente mais tarde');
+            }
+        }
+        loginID();
+    }, [ongId]);
+    
+    
 
     async function handleLogin(e){
         e.preventDefault();
 
         try {
             const response = await api.post('sessions', {id});
-            localStorage.setItem('ongId', id);
             localStorage.setItem('ongName', response.data.name);
             history.push('/profile');
+        
 
         } catch (error) {
-            alert('Falha no loguin, tente novamente');
+            alert('Falha no login, tente novamente');
         }
 
 
@@ -39,7 +56,7 @@ export default function Logon() {
 
                     <input 
                     placeholder="Sua ID"
-                    value={id}
+                    defaultValue={ongId}
                     onChange={e => setId(e.target.value)}/>
 
                     <button className="button" type="submit">Entrar</button>
