@@ -23,7 +23,7 @@ export default function Logon() {
                 setOngId(localStorage.getItem('ongId'));
             
             } catch (error) {
-                //alert('Erro ao carregar informações. Favor tente mais tarde');
+                alert('Erro ao carregar informações. Favor tente mais tarde');
             }
         }
         loginID();
@@ -36,6 +36,7 @@ export default function Logon() {
 
         try {
             const response = await api.post('sessions', {id});
+            localStorage.setItem('ongId', id);
             localStorage.setItem('ongName', response.data.name);
             history.push('/profile');
         
