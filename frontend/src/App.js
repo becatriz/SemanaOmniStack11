@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 import './global.css';
 import Routes from './routes';
 
 
 //JSX
-function App() {
+function App()  {
   
   return (
       <Routes/>

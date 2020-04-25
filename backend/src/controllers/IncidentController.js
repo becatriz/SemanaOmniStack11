@@ -28,12 +28,24 @@ module.exports = {
 
     },
 
+    async indexAll(request, response) {
+       
+
+        const incidents = await connection('incidents')
+        .select().max('id', {as:'id'});
+        response.header('id', incidents[0].id+1);
+        
+        return response.json(incidents);
+        
+
+    },
+
+
+
     async indexOne(request, response) {
 
         let { id } = request.params;
-        let [recebidoFront] = id.split(":");
-        id = recebidoFront;
-
+  
         if (!id)
             return response.status(401).json({
                 'error': 'ID desconhecido!'
@@ -53,6 +65,9 @@ module.exports = {
         const { title, description, value } = request.body;
 
         const ong_id = request.headers.authorization;
+
+
+        
 
         const [id] = await connection('incidents').insert({
             title,

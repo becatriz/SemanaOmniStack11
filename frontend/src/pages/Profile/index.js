@@ -10,10 +10,14 @@ import './styles.css';
 
 export default function Profile() {
     const [incidents, setIncidents] = useState([]);
+    const [image, setImage] = useState([]);
     const history = useHistory();
-
     const ongId = localStorage.getItem('ongId');
     const ongName = localStorage.getItem('ongName');
+
+    let id;
+
+   
 
 
     useEffect(() => {
@@ -23,7 +27,13 @@ export default function Profile() {
             }
         }).then(response => {
             setIncidents(response.data);
+        });
+
+        api.get('/posts').then(response => {
+           
+            setImage(response.data.name);
         })
+
     }, [ongId]);
 
     async function handleDeleteIncident(id) {
@@ -42,6 +52,13 @@ export default function Profile() {
         }
     }
 
+    async function handleIncident(id) {
+
+        api.get('/incidentsAll').then((request, response) => {
+        
+        })
+    }
+
     function handleGoPageUpdate(id){
         history.push(`/incidents/update/${id}`);
     }
@@ -57,7 +74,7 @@ export default function Profile() {
             <header>
                 <img src={logoImg} alt="Be the hero"></img>
                 <span>Bem vinda, {ongName}</span>
-                <Link className="button" to="/incidents/new">Cadastrar novo caso </Link>
+                <Link className="button" onClick={handleIncident}  to="/incidents/new" >Cadastrar novo caso </Link>
                 <button onClick={handleLogout} type="button">
                     <FiPower size={18} color="#E02041"></FiPower>
                 </button>
@@ -68,6 +85,9 @@ export default function Profile() {
                     <li key={incidents.id}>
                         <strong>CASO:</strong>
                         <p>{incidents.title}</p>
+
+                        <strong>IMAGEM</strong>
+                        <p>{incidents.image}</p>
 
                         <strong>DESRIÇÂO</strong>
                         <p>{incidents.description}</p>

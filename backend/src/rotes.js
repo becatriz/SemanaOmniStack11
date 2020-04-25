@@ -1,5 +1,9 @@
 const express = require('express');
 const { celebrate, Segments, Joi } = require('celebrate');
+const multer = require('multer');
+const multerConfig = require('./config/multer');
+
+const Post = require('../src/models/Post')
 
 const OngController = require('./controllers/OngController');
 const IncidentController = require('./controllers/IncidentController');
@@ -45,11 +49,9 @@ routes.post('/incidents', celebrate({
 }), IncidentController.create);
 
 
-routes.get('/incidents', celebrate({
-    [Segments.QUERY]: Joi.object({
-        page: Joi.number()
-    })
-}), IncidentController.index);
+routes.get('/incidents', IncidentController.index);
+
+routes.get('/incidentsAll', IncidentController.indexAll);
 
 //Recupera apenas 1 caso
 routes.get('/incidents/:id', celebrate({
@@ -71,6 +73,30 @@ routes.put('/incidents/:id', celebrate({
         id: Joi.number().required
     })
 }), IncidentController.update);
+
+
+routes.post('/posts', multer(multerConfig).single('file'), async (req, res) => {
+    const {originalname: name, size, filename: key} = req.file;
+
+    const post = await Post.create({
+        name,
+        size,
+        key,
+        url: '',
+    });
+    return res.json(post);
+
+});
+
+
+routes.get('/posts', async (req, res) => {
+    
+    const post = await Post.find()
+ 
+    return res.json(post);
+
+});
+
 
 
 module.exports = routes;
